@@ -13,6 +13,7 @@ func (jobStatus JobStaus) String() string {
 	return [...]string{"AVAILABLE", "WORKING"}[jobStatus]
 }
 
+// Porter is aggregate root
 type Porter struct {
 	Id       int64
 	Name     string
@@ -29,4 +30,9 @@ func CreateNewPorter(name string) (Porter, error) {
 	}
 
 	return *porter, nil
+}
+
+// Update job status
+func (porter *Porter) UpdateJobStatus(jobStatus JobStaus) {
+	porter.JobStaus = jobStatus
 }

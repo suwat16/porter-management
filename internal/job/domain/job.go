@@ -28,7 +28,7 @@ type Destination struct {
 	Room     string
 }
 
-// Job status is enum
+// Job is aggregate root
 type Job struct {
 	Id          int64
 	Version     int64
