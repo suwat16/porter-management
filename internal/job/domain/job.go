@@ -59,6 +59,7 @@ func CreateNewJob(name string, requester Requester, destination Destination) (Jo
 	return *job, nil
 }
 
+// Push event to job request
 func (job *Job) jobPushEvent() {
 	event := map[string]interface{}{
 		"event": "NEW",
