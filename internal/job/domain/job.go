@@ -6,13 +6,13 @@ import "time"
 type JobStaus int
 
 const (
-	NEW JobStaus = iota
-	PROGRESS
+	WAITING JobStaus = iota
+	DELIVERY
 	DONE
 )
 
 func (jobStatus JobStaus) String() string {
-	return [...]string{"NEW", "PROGRESS", "DONE"}[jobStatus]
+	return [...]string{"WAITING", "DELIVERY", "DONE"}[jobStatus]
 }
 
 // Requester is Object value
@@ -52,18 +52,19 @@ func CreateNewJob(name string, requester Requester, destination Destination) (Jo
 		Name:        name,
 		Requester:   requester,
 		Destination: destination,
-		Status:      JobStaus(NEW),
+		Status:      JobStaus(WAITING),
 	}
 
-	job.jobPushEvent()
+	job.jobPushEvent("CREATE_JOB")
 	return *job, nil
 }
 
 // Push event to job request
-func (job *Job) jobPushEvent() {
+func (job *Job) jobPushEvent(eventName string) {
 	event := map[string]interface{}{
-		"event": "NEW",
-		"date":  time.Now().Unix(),
+		"event": eventName,
+		"data":  job,
 	}
+
 	job.Aggregate.Event = append(job.Aggregate.Event, event)
 }

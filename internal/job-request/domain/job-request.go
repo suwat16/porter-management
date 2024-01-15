@@ -50,14 +50,14 @@ func CreateNewJobRequest(job Job) (JobRequest, error) {
 		Status:  WAITING_FOR_PORTER,
 	}
 
-	jobRequest.jobRequestPushEvent()
+	jobRequest.jobRequestPushEvent("NOTIFY_PORTER")
 	return *jobRequest, nil
 }
 
 // Push notification to porters
-func (jobRequest *JobRequest) jobRequestPushEvent() {
+func (jobRequest *JobRequest) jobRequestPushEvent(eventName string) {
 	event := map[string]interface{}{
-		"event": "job-request-created",
+		"event": eventName,
 		"data":  jobRequest,
 	}
 
@@ -66,8 +66,11 @@ func (jobRequest *JobRequest) jobRequestPushEvent() {
 
 func PorterAcceptJobRequest(jobRequest *JobRequest, porter *Porter) (JobRequest, error) {
 	jobRequest.Porter = porter
+	jobRequest.Version = jobRequest.Version + 1
 	jobRequest.Status = PORTER_ACCEPTED
-	jobRequest.jobRequestPushEvent()
+
+	// Push event update job status is delivery
+	jobRequest.jobRequestPushEvent("PORTER_ACCEPTED")
 
 	return *jobRequest, nil
 }
