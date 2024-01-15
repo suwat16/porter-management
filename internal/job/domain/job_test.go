@@ -28,7 +28,7 @@ func TestCreateNewJob(t *testing.T) {
 	assert.Nil(err, "error should be nil")
 
 	// assert job status is NEW
-	assert.Equal(job.Status, "NEW", "status should be NEW")
+	assert.Equal(job.Status, JobStaus(NEW), "job status should be NEW")
 
 	// assert job aggregate have one length
 	assert.Equal(len(job.Aggregate.Event), 1, "aggregate should have length 1")
