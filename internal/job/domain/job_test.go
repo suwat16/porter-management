@@ -9,7 +9,20 @@ import (
 func TestCreateNewJob(t *testing.T) {
 	assert := assert.New(t)
 
-	job, err := CreateNewJob()
+	jobName := "job name"
+
+	requester := Requester{
+		Name:     "requester name",
+		Position: "requester position",
+	}
+
+	destination := Destination{
+		Building: "destination building",
+		Floor:    "destination floor",
+		Room:     "destination room",
+	}
+
+	job, err := CreateNewJob(jobName, requester, destination)
 
 	// assert error is nil
 	assert.Nil(err, "error should be nil")
