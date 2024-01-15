@@ -9,7 +9,12 @@ import (
 func TestCreateNewJobRequest(t *testing.T) {
 	assert := assert.New(t)
 
-	JobRequest, err := CreateNewJobRequest(Job{})
+	job := Job{
+		Id:   1,
+		Name: "Job 1",
+	}
+
+	JobRequest, err := CreateNewJobRequest(job)
 
 	// assert error is nil
 	assert.Nil(err, "error should be nil")

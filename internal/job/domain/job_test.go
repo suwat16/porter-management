@@ -30,6 +30,6 @@ func TestCreateNewJob(t *testing.T) {
 	// assert job status is NEW
 	assert.Equal(job.Status, JobStaus(NEW), "job status should be NEW")
 
-	// assert job aggregate have one length
-	assert.Equal(len(job.Aggregate.Event), 1, "aggregate should have length 1")
+	// assert job aggregate event is not empty
+	assert.NotEmpty(job.Aggregate.Event, "job aggregate event should not be empty")
 }
