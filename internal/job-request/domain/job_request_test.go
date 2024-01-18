@@ -27,5 +27,25 @@ func TestCreateNewJobRequest(t *testing.T) {
 }
 
 func TestJobRequestAccept(t *testing.T) {
+	assert := assert.New(t)
 
+	job := Job{
+		Id:   1,
+		Name: "Job 1",
+	}
+
+	porter := Porter{
+		Id:   1,
+		Name: "Porter 1",
+	}
+
+	JobRequest, _ := CreateNewJobRequest(job)
+
+	JobRequest.PorterAcceptJobRequest(&porter)
+
+	// assert job status is PORTER_ACCEPTED
+	assert.Equal(JobRequest.Status, PORTER_ACCEPTED, "job status should be PORTER_ACCEPTED")
+
+	// assert job aggregate event is not empty
+	assert.NotEmpty(JobRequest.Aggregate.Event, "job aggregate event should not be empty")
 }
