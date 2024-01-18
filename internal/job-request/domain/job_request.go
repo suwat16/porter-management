@@ -64,13 +64,11 @@ func (jobRequest *JobRequest) jobRequestPushEvent(eventName string) {
 	jobRequest.Aggregate.Event = append(jobRequest.Aggregate.Event, event)
 }
 
-func PorterAcceptJobRequest(jobRequest *JobRequest, porter *Porter) (JobRequest, error) {
+func (jobRequest *JobRequest) PorterAcceptJobRequest(porter *Porter) (JobRequest, error) {
 	jobRequest.Porter = porter
-	jobRequest.Version = jobRequest.Version + 1
+	jobRequest.Version += 1
 	jobRequest.Status = PORTER_ACCEPTED
 
-	// Push event update job status is delivery
 	jobRequest.jobRequestPushEvent("PORTER_ACCEPTED")
-
 	return *jobRequest, nil
 }
