@@ -15,10 +15,5 @@ func (c *CreateJobUseCase) Execute(jobName string, requester entity.Requester, d
 		return nil, err
 	}
 
-	// err = c.JobRepository.Save(&job)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	return &job, nil
 }

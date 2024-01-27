@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"porter-management/internal/job-request/domain"
+	"porter-management/internal/job/domain/entity"
 )
 
 type JobRepository struct {
@@ -13,25 +13,11 @@ func NewJobRepository(db *sql.Tx) *JobRepository {
 	return &JobRepository{db: db}
 }
 
-func (repo *JobRepository) Save(job *domain.Job) (domain.Job, error) {
-	row := repo.db.QueryRow("select id from job where id = $1", job.Id)
-
-	var id int64
-	if row.Scan(&id) == nil {
-		// _, err := repo.db.Exec("update job set status = $1, updated_at = $2 where id = $3",
-		// job.Status, job.Id)
-		// return err
+func (repo *JobRepository) Save(job *entity.Job) (entity.Job, error) {
+	_, err := repo.db.Exec("INSERT INTO jobs (id, version, name, status, requester_name, requester_position, destination_building, destination_floor, destination_room) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", job.Id, job.Version, job.Name, job.Status, job.Requester.Name, job.Requester.Position, job.Destination.Building, job.Destination.Floor, job.Destination.Room)
+	if err != nil {
+		return entity.Job{}, err
 	}
 
-	// _, err := repo.db.Exec("insert into job (id, status, created_at, updated_at) values ($1, $2, $3, $4)", job.Id, job.Status, job.CreatedAt, job.UpdatedAt)
-
-	// if err != nil {
-	// return err
-	// }
-
 	return *job, nil
-}
-
-func (repo *JobRepository) FindOneById(id int64) (domain.Job, error) {
-	return domain.Job{}, nil
 }
