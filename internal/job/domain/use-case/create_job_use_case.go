@@ -1,9 +1,12 @@
 package usecase
 
-import "porter-management/internal/job/domain"
+import (
+	infra "porter-management/internal/job-request/infra/repository"
+	"porter-management/internal/job/domain"
+)
 
 type CreateJobUseCase struct {
-	JobRepository domain.JobRepository
+	JobRepository infra.JobRequestRepo
 }
 
 func (c *CreateJobUseCase) Execute(jobName string, requester domain.Requester, destination domain.Destination) (*domain.Job, error) {
@@ -12,10 +15,10 @@ func (c *CreateJobUseCase) Execute(jobName string, requester domain.Requester, d
 		return nil, err
 	}
 
-	err = c.JobRepository.Save(&job)
-	if err != nil {
-		return nil, err
-	}
+	// err = c.JobRepository.Save(&job)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &job, nil
 }
