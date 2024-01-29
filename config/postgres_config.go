@@ -1,10 +1,8 @@
 package config
 
 import (
+	"database/sql"
 	"fmt"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 type PostgresConfig struct {
@@ -15,10 +13,8 @@ type PostgresConfig struct {
 	Dbname   string
 }
 
-func InitDb() (*gorm.DB, error) {
-	dns := "host=localhost user=postgres password=password dbname=main_db port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
-
+func InitDb() (*sql.DB, error) {
+	db, err := sql.Open("postgres", "host=localhost user=postgres password=password dbname=main_db port=5432 sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
