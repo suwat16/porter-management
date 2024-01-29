@@ -30,7 +30,12 @@ func TestSave(t *testing.T) {
 		Room:     "destination room",
 	}
 
-	job, err := entity.CreateNewJob(jobName, requester, destination)
+	equipment := entity.Equipment{
+		Name:     "equipment name",
+		Quantity: 1,
+	}
+
+	job, _ := entity.CreateNewJob(jobName, requester, destination, equipment)
 
 	mock.ExpectExec("INSERT INTO jobs").
 		WithArgs(job.Id, job.Name, job.Requester.Name, job.Requester.Position, job.Destination.Building, job.Destination.Floor, job.Destination.Room, job.Status).

@@ -28,6 +28,11 @@ type Destination struct {
 	Room     string
 }
 
+type Equipment struct {
+	Name     string
+	Quantity int64
+}
+
 // Job is aggregate root
 type Job struct {
 	Id          int64
@@ -36,6 +41,7 @@ type Job struct {
 	Status      JobStaus
 	Requester   Requester
 	Destination Destination
+	Equipment   Equipment
 	Aggregate   Aggregate
 }
 
@@ -43,7 +49,7 @@ type Aggregate struct {
 	Event []map[string]interface{}
 }
 
-func CreateNewJob(name string, requester Requester, destination Destination) (Job, error) {
+func CreateNewJob(name string, requester Requester, destination Destination, equipment Equipment) (Job, error) {
 	id := time.Now().Unix()
 
 	job := &Job{
@@ -52,6 +58,7 @@ func CreateNewJob(name string, requester Requester, destination Destination) (Jo
 		Name:        name,
 		Requester:   requester,
 		Destination: destination,
+		Equipment:   equipment,
 		Status:      JobStaus(WAITING),
 	}
 

@@ -9,8 +9,8 @@ type CreateJobUseCase struct {
 	JobRepository repository.JobRepository
 }
 
-func (c *CreateJobUseCase) Execute(jobName string, requester entity.Requester, destination entity.Destination) (*entity.Job, error) {
-	job, err := entity.CreateNewJob(jobName, requester, destination)
+func (c *CreateJobUseCase) Execute(jobName string, requester entity.Requester, destination entity.Destination, equipment entity.Equipment) (*entity.Job, error) {
+	job, err := entity.CreateNewJob(jobName, requester, destination, equipment)
 	if err != nil {
 		return nil, err
 	}

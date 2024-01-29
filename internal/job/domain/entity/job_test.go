@@ -22,7 +22,12 @@ func TestCreateNewJob(t *testing.T) {
 		Room:     "destination room",
 	}
 
-	job, err := CreateNewJob(jobName, requester, destination)
+	equipment := Equipment{
+		Name:     "equipment name",
+		Quantity: 1,
+	}
+
+	job, err := CreateNewJob(jobName, requester, destination, equipment)
 
 	// assert error is nil
 	assert.Nil(err, "error should be nil")
