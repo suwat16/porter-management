@@ -11,6 +11,19 @@ func NewUnitOfWork(db *sql.DB) *Uow {
 	return &Uow{db: db}
 }
 
+func (u *Uow) DoInTransaction(f func() error) error {
+	err := u.Begin()
+	if err != nil {
+		return err
+	}
+	err = f()
+	if err != nil {
+		u.Rollback()
+		return err
+	}
+	return u.Commit()
+}
+
 func (u *Uow) Begin() error {
 	tx, err := u.db.Begin()
 	if err != nil {
