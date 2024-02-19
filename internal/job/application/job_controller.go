@@ -1,46 +1,66 @@
 package controller
 
 import (
+	"database/sql"
+	"porter-management/config"
+	Job "porter-management/internal/job/domain/entity"
+	jobUseCase "porter-management/internal/job/domain/use_case"
+
 	"github.com/gin-gonic/gin"
 	"github.com/streadway/amqp"
 )
 
 type JobController struct {
-	gin *gin.Engine
-	ch  *amqp.Channel
+	Gin *gin.Engine
+	Db  *sql.DB
+	Ch  *amqp.Channel
 }
 
-func NewJobController(gin *gin.Engine, ch *amqp.Channel) *JobController {
-	return &JobController{gin: gin, ch: ch}
+func NewJobController(gin *gin.Engine, db *sql.DB, ch *amqp.Channel) *JobController {
+	return &JobController{Gin: gin, Db: db, Ch: ch}
 }
 
 func (jobController *JobController) RegisterRoutes() {
 	//Exchange Declare
-	err := jobController.ch.ExchangeDeclare("job", "direct", true, false, false, false, nil)
+	err := jobController.Ch.ExchangeDeclare("job", "direct", true, false, false, false, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	jobController.gin.GET("/job", jobController.GetJobs)
+	jobController.Gin.GET("/job", jobController.GetJobs)
 }
 
 func (jobController *JobController) GetJobs(c *gin.Context) {
-	// Publish a message to the exchange job with the routing key create-job
+	uow := config.NewUnitOfWork(jobController.Db)
 
-	// Message is object
-	message := `{"name": "Job 1", "description": "This is job 1"}`
+	jobU := jobUseCase.NewJobUseCase(uow, jobController.Ch)
 
-	// Publish a message to the exchange job with the routing key create-job
-	err := jobController.ch.Publish("job", "create-job", false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        []byte(message),
-	})
+	requester := Job.Requester{
+		Name:     "John Doe",
+		Position: "Manager",
+	}
+
+	destination := Job.Destination{
+		Building: "A",
+		Floor:    "1",
+		Room:     "101",
+	}
+
+	equipment := Job.Equipment{
+		Name:     "Laptop",
+		Quantity: 1,
+	}
+
+	newJob, err := jobU.ExecuteNewJob("Job 1", requester, destination, equipment)
 
 	if err != nil {
-		panic(err)
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
 	}
 
 	c.JSON(200, gin.H{
 		"message": "Hello World",
+		"data":    newJob,
 	})
 }
