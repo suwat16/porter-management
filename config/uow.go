@@ -3,12 +3,12 @@ package config
 import "database/sql"
 
 type Uow struct {
-	db *sql.DB
-	tx *sql.Tx
+	Db *sql.DB
+	Tx *sql.Tx
 }
 
 func NewUnitOfWork(db *sql.DB) *Uow {
-	return &Uow{db: db}
+	return &Uow{Db: db}
 }
 
 func (u *Uow) DoInTransaction(f func() error) error {
@@ -25,18 +25,18 @@ func (u *Uow) DoInTransaction(f func() error) error {
 }
 
 func (u *Uow) Begin() error {
-	tx, err := u.db.Begin()
+	tx, err := u.Db.Begin()
 	if err != nil {
 		return err
 	}
-	u.tx = tx
+	u.Tx = tx
 	return nil
 }
 
 func (u *Uow) Commit() error {
-	return u.tx.Commit()
+	return u.Tx.Commit()
 }
 
 func (u *Uow) Rollback() error {
-	return u.tx.Rollback()
+	return u.Tx.Rollback()
 }

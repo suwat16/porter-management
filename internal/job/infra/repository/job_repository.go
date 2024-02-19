@@ -21,3 +21,14 @@ func (repo *JobRepository) Save(job *entity.Job) (entity.Job, error) {
 
 	return *job, nil
 }
+
+func (repo *JobRepository) FindById(id string, version string) (entity.Job, error) {
+	row := repo.tx.QueryRow("SELECT id, version, name, status, requester_name, requester_position, destination_building, destination_floor, destination_room FROM jobs WHERE id = ? AND version = ?", id, version)
+	var job entity.Job
+	err := row.Scan(&job.Id, &job.Version, &job.Name, &job.Status, &job.Requester.Name, &job.Requester.Position, &job.Destination.Building, &job.Destination.Floor, &job.Destination.Room)
+	if err != nil {
+		return entity.Job{}, err
+	}
+
+	return job, nil
+}

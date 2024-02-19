@@ -3,27 +3,33 @@ package usecase
 import (
 	"porter-management/config"
 	"porter-management/internal/job/domain/entity"
-	"porter-management/internal/job/infra/repository"
+
+	"github.com/streadway/amqp"
+
+	JobRepo "porter-management/internal/job/infra/repository"
 )
 
 type JobUseCase struct {
-	JobRepository repository.JobRepository
+	Uow  *config.Uow
+	Amqp *amqp.Channel
 }
 
-func NewJobUseCase(jobRepository repository.JobRepository) *JobUseCase {
+func NewJobUseCase(uow *config.Uow, amqp *amqp.Channel) *JobUseCase {
 	return &JobUseCase{
-		JobRepository: jobRepository,
+		Uow:  uow,
+		Amqp: amqp,
 	}
 }
 
-func (jobUseCase *JobUseCase) ExecuteNewJob(uow config.Uow, jobName string, requester entity.Requester, destination entity.Destination, equipment entity.Equipment) (*entity.Job, error) {
+func (jobUseCase *JobUseCase) ExecuteNewJob(jobName string, requester entity.Requester, destination entity.Destination, equipment entity.Equipment) (*entity.Job, error) {
 	job, err := entity.CreateNewJob(jobName, requester, destination, equipment)
 	if err != nil {
 		return nil, err
 	}
 
-	err = uow.DoInTransaction(func() error {
-		_, err := jobUseCase.JobRepository.Save(&job)
+	err = jobUseCase.Uow.DoInTransaction(func() error {
+		jobRepo := JobRepo.NewJobRepository(jobUseCase.Uow.Tx)
+		_, err := jobRepo.Save(&job)
 		if err != nil {
 			return err
 		}
@@ -33,6 +39,11 @@ func (jobUseCase *JobUseCase) ExecuteNewJob(uow config.Uow, jobName string, requ
 	if err != nil {
 		return nil, err
 	}
+
+	jobUseCase.Amqp.Publish("job", "create-job", false, false, amqp.Publishing{
+		ContentType: "application/json",
+		Body:        []byte(`{"name": "Job 1", "description": "This is job 1"}`),
+	})
 
 	return &job, nil
 }
