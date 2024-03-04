@@ -1,24 +1,16 @@
 package config
 
 import (
-	"database/sql"
-	"fmt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-type PostgresConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Dbname   string
-}
-
-func InitDb() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "host=localhost user=postgres password=password dbname=main_db port=5432 sslmode=disable")
+func InitDb(dns string) (*gorm.DB, error) {
+	// gorm connection to postgres
+	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		panic("failed to connect database")
 	}
-	fmt.Println("Database connected")
 
 	return db, nil
 }
