@@ -1,4 +1,4 @@
-package config
+package uow
 
 import "database/sql"
 
