@@ -33,7 +33,7 @@ func main() {
 
 	// Initialize JobController
 	jobCTRL := application.NewJobController(route, db, ch)
-	jobCTRL.RegisterRoutes()
+	jobCTRL.RegisterRoutes("/jobs")
 
 	route.Run(":8080")
 }
