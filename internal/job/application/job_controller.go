@@ -1,10 +1,7 @@
-package controller
+package application
 
 import (
 	"database/sql"
-	"porter-management/config"
-	Job "porter-management/internal/job/domain/entity"
-	jobUseCase "porter-management/internal/job/domain/use_case"
 
 	"github.com/gin-gonic/gin"
 	"github.com/streadway/amqp"
@@ -31,36 +28,36 @@ func (jobController *JobController) RegisterRoutes() {
 }
 
 func (jobController *JobController) GetJobs(c *gin.Context) {
-	uow := config.NewUnitOfWork(jobController.Db)
+	// uow := config.NewUnitOfWork(jobController.Db)
 
-	jobU := jobUseCase.NewJobUseCase(uow, jobController.Ch)
+	// jobU := jobUseCase.NewJobUseCase(uow, jobController.Ch)
 
-	requester := Job.Requester{
-		Name:     "John Doe",
-		Position: "Manager",
-	}
+	// requester := Job.Requester{
+	// 	Name:     "John Doe",
+	// 	Position: "Manager",
+	// }
 
-	destination := Job.Destination{
-		Building: "A",
-		Floor:    "1",
-		Room:     "101",
-	}
+	// destination := Job.Destination{
+	// 	Building: "A",
+	// 	Floor:    "1",
+	// 	Room:     "101",
+	// }
 
-	equipment := Job.Equipment{
-		Name:     "Laptop",
-		Quantity: 1,
-	}
+	// equipment := Job.Equipment{
+	// 	Name:     "Laptop",
+	// 	Quantity: 1,
+	// }
 
-	newJob, err := jobU.ExecuteNewJob("Job 1", requester, destination, equipment)
+	// newJob, err := jobU.ExecuteNewJob("Job 1", requester, destination, equipment)
 
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": err.Error(),
-		})
-	}
+	// if err != nil {
+	// 	c.JSON(500, gin.H{
+	// 		"message": err.Error(),
+	// 	})
+	// }
 
-	c.JSON(200, gin.H{
-		"message": "Hello World",
-		"data":    newJob,
-	})
+	// c.JSON(200, gin.H{
+	// 	"message": "Hello World",
+	// 	"data":    newJob,
+	// })
 }
