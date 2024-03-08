@@ -14,14 +14,13 @@ type GormConfig struct {
 	dbname   string
 }
 
-func NewGormConfig(host, user, password, dbname string) (*gorm.DB, error) {
-	gormConfig := &GormConfig{
+func NewGormConfig(host, user, password, dbname string) *GormConfig {
+	return &GormConfig{
 		host:     host,
 		user:     user,
 		password: password,
 		dbname:   dbname,
 	}
-	return gormConfig.Init()
 }
 
 func (g *GormConfig) GetDns() string {
