@@ -19,17 +19,17 @@ func NewJobController(gin *gin.Engine, db *sql.DB, ch *amqp.Channel) *JobControl
 	return &JobController{Gin: gin, Db: db, Ch: ch}
 }
 
-func (jobController *JobController) RegisterRoutes(routePath string) {
+func (jc *JobController) RegisterRoutes(routePath string) {
 	//Exchange Declare
-	err := jobController.Ch.ExchangeDeclare("job", "direct", true, false, false, false, nil)
+	err := jc.Ch.ExchangeDeclare("job", "direct", true, false, false, false, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	jobController.Gin.POST(routePath, jobController.CreateJob)
+	jc.Gin.POST(routePath, jc.CreateJob)
 }
 
-func (jobController *JobController) CreateJob(c *gin.Context) {
+func (jc *JobController) CreateJob(c *gin.Context) {
 	requester := entity.Requester{
 		Name:     "John Doe",
 		Position: "Manager",
@@ -46,18 +46,17 @@ func (jobController *JobController) CreateJob(c *gin.Context) {
 		Quantity: 1,
 	}
 
-	usecase := usecase.NewJobUseCase(jobController.Db, jobController.Ch)
-
-	newJob, err := usecase.ExecuteNewJob("Job 1", requester, destination, equipment)
-
+	usecase := usecase.NewJobUseCase(jc.Db, jc.Ch)
+	_, err := usecase.ExecuteNewJob("Job 1", requester, destination, equipment)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": err.Error(),
 		})
 	}
 
+	// convert job to json and return
 	c.JSON(200, gin.H{
-		"message": "Hello World",
-		"data":    newJob,
+		"message": "success",
+		"body":    "{}",
 	})
 }

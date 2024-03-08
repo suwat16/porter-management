@@ -14,7 +14,7 @@ func NewJobRepository(tx *sql.Tx) *JobRepository {
 }
 
 func (repo *JobRepository) Save(job *entity.Job) (entity.Job, error) {
-	_, err := repo.tx.Exec("INSERT INTO jobs (id, version, name, status, requester_name, requester_position, destination_building, destination_floor, destination_room) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", job.Id, job.Version, job.Name, job.Status, job.Requester.Name, job.Requester.Position, job.Destination.Building, job.Destination.Floor, job.Destination.Room)
+	_, err := repo.tx.Exec("INSERT INTO job (version, name, status) VALUES ($1, $2, $3)", job.Version, job.Name, job.Status)
 	if err != nil {
 		return entity.Job{}, err
 	}
